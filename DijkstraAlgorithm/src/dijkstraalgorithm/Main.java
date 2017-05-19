@@ -6,10 +6,48 @@ import Graphs.*;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) {   
         
+        //!DEBUG
+        //START interazioni utente
+        Scanner s = new Scanner(System.in);
+        Integer resp1;
+        Boolean resp2;
+        
+        //Dimensioni
+        System.out.println("inserisci il numero di nodi presenti nel grafo");
+        resp1 = Integer.parseInt(s.nextLine());
+        if (resp1 > 26) System.out.println("numero massimo: 26");
+        if (resp1 < 1) System.out.println("numero minimo: 1");
+        
+        //Tipo di canale
+        System.out.println("premi:\n'b' per bidirezionale\n'm' per monodirezionale (casualmente può generarne bidirezionali)");
+        String t = s.nextLine();
+        while (!"m".equals(t) && !"b".equals(t)) t = s.nextLine(); 
+        resp2 = t.equals("b");           
+        //END interazioni utente
+        
+        System.out.println("\nMatrice di adiacenza del grafo");
+        Graph<String> g = Dijkstra.randomGraph(resp1, resp2);
+        for (int[] r : g.getAdjMat()){
+            String row = "";
+            for (int i : r) row += i + "; ";
+            System.out.println(row);
+        }   
+                
+        System.out.println("\nStrada più corta:");
+        Stack<String> st = Dijkstra.findPath(g, g.getSummit(0), g.getSummit(g.countSummits() - 1));
+        if (st != null && st.size() > 0)
+            for (int k = st.size(); k > 0; k--) System.out.println(st.pop());
+        else 
+            System.out.println("Strada non trovata");
+        
+        main(args);            
+        //END !DEBUG
+        
+                
         /*
-        //DEBUG      
+        //DEBUG
         MatrixGraph<String> g = new MatrixGraph<>();        
         ArrayList<String> l = new ArrayList<>();        
         l.add("A");
@@ -47,55 +85,16 @@ public class Main {
         g.addArch(l.get(4), l.get(3), 6);
         //E-F
         g.addArch(l.get(4), l.get(5), 9);
-        g.addArch(l.get(5), l.get(4), 9);       
+        g.addArch(l.get(5), l.get(4), 9); 
         
-        Dijkstra d = new Dijkstra(g);
-        //END_DEBUG
-        */
-        
-        /*START interazioni utente*/
-        Scanner s = new Scanner(System.in);
-        Integer resp1;
-        Boolean resp2;
-        
-        //Dimensioni
-        System.out.println("inserisci il numero di nodi presenti nel grafo");
-        resp1 = Integer.parseInt(s.nextLine());
-        if (resp1 > 26) System.out.println("numero massimo: 26");
-        if (resp1 < 1) System.out.println("numero minimo: 1");
-        
-        //Tipo di canale
-        System.out.println("premi:\n'b' per bidirezionale\n'm' per monodirezionale (casualmente può generarne bidirezionali)");
-        String t = s.nextLine();
-        while (!"m".equals(t) && !"b".equals(t)) t = s.nextLine(); 
-        resp2 = t.equals("b");           
-        /*END interazioni utente*/
-        
-        
-        //START COMMENT IN DEBUG
-        System.out.println("\nMatrice di adiacenza del grafo ( che può essere anche con liste di adiacenza )");
-        Dijkstra d = new Dijkstra(resp1, resp2);
-        for (int[] r : d.g.getAdjMat()){
-            String row = "";
-            for (int i : r) row += i + ";";
-            System.out.println(row);
-        }   
-                
-        System.out.println("\nStrada più corta");
-        Stack<String> st = d.runTest();
+        System.out.println("\nStrada più corta:");
+        Stack<String> st = Dijkstra.findPath(g, "A", "E");
         if (st != null && st.size() > 0)
             for (int k = st.size(); k > 0; k--) System.out.println(st.pop());
         else 
-            System.out.println("\nStrada non trovata");
-        
-        main(args);    
-        //END COMMENT IN DEBUG
-                
-        /*
-        //DEBUG
-        Stack<String> s = d.findPath("A", "E");
-        for (int k = s.size(); k > 0; k--) System.out.println(s.pop());
+            System.out.println("Strada non trovata");        
         //END DEBUG
         */
+        
     }    
 }

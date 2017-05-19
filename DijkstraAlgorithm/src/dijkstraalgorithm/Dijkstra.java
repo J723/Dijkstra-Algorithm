@@ -3,63 +3,42 @@ package dijkstraalgorithm;
 import Graphs.*;
 import java.util.*;
 
-public class Dijkstra{
+public class Dijkstra{    
     
-    public Graph<String> g;
-    
-    public Dijkstra(Graph g){
-        this.g = g;
-    }
-    
-    public Dijkstra (int size, boolean duplex){  
-        //TODO IMPLEMENTARE ALFABETO ESTESO -> NUMERAZIONE IN BASE 26 -> PER SIZE > 26        
-        //if (size > 26) size = 26;
-        
-        if (size < 1) size = 1;        
-        
+    public Dijkstra(){}
+
+    /**
+     * @:esegue l'algoritmo tra due nodi casuali in un grafo casuale
+     * @param size: numero di nodi del grafo
+     * @param duplex: true per archi bidirezionali, false per monodirezionali/misti
+     * @return Stack<>: pila di nodi contenente la strada
+     */
+    public static Stack<String> runTest(int size, boolean duplex){
+        Graph<String> g = randomGraph(size, duplex);
         Random r = new Random();
-        Graph<String> g = new MatrixGraph<>();
-        //per implementazione grafica:
-        //String[] abc = new String[] {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
+        int gSize = g.countSummits();
         
-        //crea i nodi 
-        for (int i = 0; i < size; i++) g.addSummit(i+"");// oppure: abc[i]
-        
-        //crea gli archi con pesi generici [archi bidirezionali]
-        int nk = size * size - size;//numero di archi
-        for (int i = 0; i < nk; i++){
-            //estrae casualmente due nodi diversi
-            String p1 = g.getSummit(r.nextInt(size));
-            String p2 = g.getSummit(r.nextInt(size));
-            while (p1.equals(p2)) p2 = g.getSummit(r.nextInt(size));
-            
-            //crea l'arco bidirezionale            
-            int w = r.nextInt(size * size);
-            while (w == 0) w = r.nextInt(size);            
-            g.addArch(p1, p2, w);
-            if (duplex) g.addArch(p2, p1, w);
-        }        
-        this.g = g;
-    }    
-    
-    public Stack<String> runTest(){
-        Random r = new Random();
-        int size = g.countSummits();
-        
-        int r1 = r.nextInt(size/2);
+        int r1 = r.nextInt(gSize/2);
         int r2 = 0;
         
         do{
-            while(r2 < size/2) r2 = r.nextInt(size);
+            while(r2 < gSize/2) r2 = r.nextInt(gSize);
         }while(r1 == r2);        
         
         String start = g.getSummit(r1);
         String end = g.getSummit(r2);
         
-        return findPath(start, end);
+        return findPath(g, start, end);
     }
     
-    public Stack<String> findPath(String start, String end){
+    /**
+     * @:Dati due nodi ed un grafo calcola la strada con peso minore per calcolarli
+     * @param g: grafo di cui calcolare la strada più breve
+     * @param start: nodo di partenza
+     * @param end: nodo di fine
+     * @return Stack<>: pila di nodi contenente la strada
+     */
+    public static Stack<String> findPath(Graph<String> g, String start, String end){
         
         //controlla l'esistenza di {start} ed {end}
         if (g.getSummit(start) == -1 || g.getSummit(end) == -1 ) return null;
@@ -112,4 +91,40 @@ public class Dijkstra{
         return path;
     }
     
+    /**
+     * @:Genera un grafo casuale
+     * @param size: numero di nodi del grafo
+     * @param duplex: true per archi bidirezionali, false per monodirezionali/misti
+     * @return Graph<String>: grafo generato casualmente
+     */
+    public static Graph<String> randomGraph(int size, boolean duplex){
+        //TODO IMPLEMENTARE ALFABETO ESTESO -> NUMERAZIONE IN BASE 26 -> PER SIZE > 26        
+        //if (size > 26) size = 26;
+        
+        if (size < 1) size = 1;        
+        
+        Random r = new Random();
+        Graph<String> g = new MatrixGraph<>();
+        //per implementazione grafica:
+        //String[] abc = new String[] {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
+        
+        //crea i nodi 
+        for (int i = 0; i < size; i++) g.addSummit(i+"");// oppure: abc[i]
+        
+        //crea gli archi con pesi generici [archi bidirezionali]
+        int nk = size * size - size;//numero di archi
+        for (int i = 0; i < nk; i++){
+            //estrae casualmente due nodi diversi
+            String p1 = g.getSummit(r.nextInt(size));
+            String p2 = g.getSummit(r.nextInt(size));
+            while (p1.equals(p2)) p2 = g.getSummit(r.nextInt(size));
+            
+            //crea l'arco bidirezionale            
+            int w = r.nextInt(size * size);
+            while (w == 0) w = r.nextInt(size);            
+            g.addArch(p1, p2, w);
+            if (duplex) g.addArch(p2, p1, w);
+        }        
+        return g;
+    }
 }
